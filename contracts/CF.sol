@@ -4,36 +4,6 @@ pragma solidity ^0.8.12;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract CrowdFund {
-    // event Launch(
-    //     uint id,
-    //     address indexed creator,
-    //     uint goal,
-    //     uint32 startAt,
-    //     uint32 endAt
-    // );
-    // event Cancel(uint id);
-    // event Pledge(uint indexed id, address indexed caller, uint amount);
-    // event Unpledge(uint indexed id, address indexed caller, uint amount);
-    // event Claim(uint id);
-    // event Refund(uint id, address indexed caller, uint amount);
-
-    // struct Campaign {
-    //     address creator;
-    //     uint goal;
-    //     uint pledged;
-    //     uint32 startAt;
-    //     uint32 endAt;
-    //     bool claimed;
-    // }
-
-    //  uint public count;
-    // // Mapping from id to Campaign
-    // mapping(uint => Campaign) public campaigns;
-    // // Mapping from campaign id => pledger => amount pledged
-    // mapping(uint => mapping(address => uint)) public pledgedAmount;
-    // constructor(address _token) {
-    //     token = IERC20(_token);
-    // }
     address public owner;
     uint public goal;
     uint256 public startAt;
