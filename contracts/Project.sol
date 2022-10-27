@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.9;
+pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
 
-error Proejct__IncorrectState();
+error Project__IncorrectState();
 error Project__CreatorCannotFundHisProject();
 error Project__FundingNotExpired();
 error Project__FundsNotGiven();
@@ -18,6 +18,8 @@ contract Project {
         EXPIRED,
         CLOSED
     }
+
+    event ProjectStart(uint indexed id, address project_address);
 
     // For testing pruposes. Will be changed to a higher number
     uint constant MIN_FUNDERS = 2;
@@ -54,7 +56,7 @@ contract Project {
 
     modifier isState(State _state) {
         if (s_state != _state) {
-            revert Proejct__IncorrectState();
+            revert Project__IncorrectState();
         }
         _;
     }
@@ -74,12 +76,13 @@ contract Project {
         s_title = title;
         i_id = id;
         s_description = description;
-        s_rasieBy = fundRaisingDeadline;
+        s_rasieBy = block.timestamp + fundRaisingDeadline*24*3600;
         s_state = State.FUNDRAISING;
         s_fundingRound = 1;
         s_goalAmount = s_fundingRound * 1000;
         s_currentBalance = 0;
         s_maxAmountToInvest = Math.ceilDiv(s_goalAmount, MIN_FUNDERS);
+        emit ProjectStart(id, address(this));
     }
 
     /**
@@ -87,7 +90,7 @@ contract Project {
      * amount which would be changed to any amount after certain number of rounds
      */
     function contribute() public payable isState(State.FUNDRAISING) {
-        if (msg.sender != i_creator)
+        if (msg.sender == i_creator)
             revert Project__CreatorCannotFundHisProject();
         if (contributedFunds[msg.sender] + msg.value > s_maxAmountToInvest)
             revert Project__AmountExceedsLimit();
@@ -151,6 +154,10 @@ contract Project {
         s_currentBalance -= amountToRefund;
         emit AmountRefunded(msg.sender, amountToRefund);
         return true;
+    }
+
+    function getState() public view returns(State) {
+        return s_state;
     }
 
     function getDetails()
